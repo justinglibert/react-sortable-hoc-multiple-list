@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.vendorPrefix = exports.events = undefined;
 
@@ -10,97 +10,119 @@ var _keys = require('babel-runtime/core-js/object/keys');
 var _keys2 = _interopRequireDefault(_keys);
 
 exports.arrayMove = arrayMove;
+exports.arrayInsert = arrayInsert;
 exports.omit = omit;
+exports.getOffset = getOffset;
 exports.closest = closest;
-exports.limit = limit;
+exports.clamp = clamp;
 exports.getElementMargin = getElementMargin;
 exports.provideDisplayName = provideDisplayName;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function arrayMove(arr, previousIndex, newIndex) {
-    var array = arr.slice(0);
+  var array = arr.slice(0);
+  if (newIndex === -1) {
+    array.splice(previousIndex, 1);
+  } else {
     if (newIndex >= array.length) {
-        var k = newIndex - array.length;
-        while (k-- + 1) {
-            array.push(undefined);
-        }
+      var k = newIndex - array.length;
+      while (k-- + 1) {
+        array.push(undefined);
+      }
     }
     array.splice(newIndex, 0, array.splice(previousIndex, 1)[0]);
-    return array;
+  }
+  return array;
+}
+
+function arrayInsert(arr, index, item) {
+  var array = arr.slice(0);
+  array.splice(index, 0, item);
+  return array;
 }
 
 function omit(obj) {
-    for (var _len = arguments.length, keysToOmit = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        keysToOmit[_key - 1] = arguments[_key];
-    }
+  for (var _len = arguments.length, keysToOmit = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    keysToOmit[_key - 1] = arguments[_key];
+  }
 
-    return (0, _keys2.default)(obj).reduce(function (acc, key) {
-        if (keysToOmit.indexOf(key) === -1) acc[key] = obj[key];
-        return acc;
-    }, {});
+  return (0, _keys2.default)(obj).reduce(function (acc, key) {
+    if (keysToOmit.indexOf(key) === -1) acc[key] = obj[key];
+    return acc;
+  }, {});
 }
 
 var events = exports.events = {
-    start: ['touchstart', 'mousedown'],
-    move: ['touchmove', 'mousemove'],
-    end: ['touchend', 'touchcancel', 'mouseup']
+  start: ['touchstart', 'mousedown'],
+  move: ['touchmove', 'mousemove'],
+  end: ['touchend', 'touchcancel', 'mouseup']
 };
 
 var vendorPrefix = exports.vendorPrefix = function () {
-    if (typeof window === 'undefined' || typeof document === 'undefined') return ''; // server environment
-    // fix for:
-    //    https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-    //    window.getComputedStyle() returns null inside an iframe with display: none
-    // in this case return an array with a fake mozilla style in it.
-    var styles = window.getComputedStyle(document.documentElement, '') || ['-moz-hidden-iframe'];
-    var pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1];
+  if (typeof window === 'undefined' || typeof document === 'undefined') return ''; // server environment
+  // fix for:
+  //    https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+  //    window.getComputedStyle() returns null inside an iframe with display: none
+  // in this case return an array with a fake mozilla style in it.
+  var styles = window.getComputedStyle(document.documentElement, '') || ['-moz-hidden-iframe'];
+  var pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1];
 
-    switch (pre) {
-        case 'ms':
-            return 'ms';
-        default:
-            return pre && pre.length ? pre[0].toUpperCase() + pre.substr(1) : '';
-    }
+  switch (pre) {
+    case 'ms':
+      return 'ms';
+    default:
+      return pre && pre.length ? pre[0].toUpperCase() + pre.substr(1) : '';
+  }
 }();
 
-function closest(el, fn) {
-    while (el) {
-        if (fn(el)) return el;
-        el = el.parentNode;
-    }
+function getOffset(e) {
+  var event = e.touches ? e.touches[0] : e;
+  return {
+    x: event.clientX,
+    y: event.clientY,
+    pageX: event.pageX,
+    pageY: event.pageY
+  };
 }
 
-function limit(min, max, value) {
-    if (value < min) {
-        return min;
-    }
-    if (value > max) {
-        return max;
-    }
-    return value;
+function closest(el, fn) {
+  while (el) {
+    if (fn(el)) return el;
+    el = el.parentNode;
+  }
+}
+
+function clamp(value, min, max) {
+  if (value < min) {
+    return min;
+  }
+  if (value > max) {
+    return max;
+  }
+  return value;
 }
 
 function getCSSPixelValue(stringValue) {
-    if (stringValue.substr(-2) === 'px') {
-        return parseFloat(stringValue);
-    }
-    return 0;
+  if (stringValue.substr(-2) === 'px') {
+    return parseFloat(stringValue);
+  }
+  return 0;
 }
 
 function getElementMargin(element) {
-    var style = window.getComputedStyle(element);
+  var style = window.getComputedStyle(element);
 
-    return {
-        top: getCSSPixelValue(style.marginTop),
-        right: getCSSPixelValue(style.marginRight),
-        bottom: getCSSPixelValue(style.marginBottom),
-        left: getCSSPixelValue(style.marginLeft)
-    };
+  return {
+    top: getCSSPixelValue(style.marginTop),
+    right: getCSSPixelValue(style.marginRight),
+    bottom: getCSSPixelValue(style.marginBottom),
+    left: getCSSPixelValue(style.marginLeft)
+  };
 }
 
 function provideDisplayName(prefix, Component) {
-    var componentName = Component.displayName || Component.name;
+  var componentName = Component.displayName || Component.name;
 
-    return componentName ? prefix + '(' + componentName + ')' : prefix;
+  return componentName ? prefix + '(' + componentName + ')' : prefix;
 }

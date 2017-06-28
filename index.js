@@ -3,10 +3,16 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.arrayMove = exports.sortableHandle = exports.sortableElement = exports.sortableContainer = exports.SortableHandle = exports.SortableElement = exports.SortableContainer = undefined;
+exports.DragLayer = exports.arrayMove = exports.arrayInsert = exports.sortableHandle = exports.sortableElement = exports.sortableContainer = exports.SortableHandle = exports.SortableElement = exports.SortableContainer = undefined;
 
 var _utils = require('./utils');
 
+Object.defineProperty(exports, 'arrayInsert', {
+  enumerable: true,
+  get: function get() {
+    return _utils.arrayInsert;
+  }
+});
 Object.defineProperty(exports, 'arrayMove', {
   enumerable: true,
   get: function get() {
@@ -26,6 +32,10 @@ var _SortableHandle2 = require('./SortableHandle');
 
 var _SortableHandle3 = _interopRequireDefault(_SortableHandle2);
 
+var _DragLayer2 = require('./DragLayer');
+
+var _DragLayer3 = _interopRequireDefault(_DragLayer2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.SortableContainer = _SortableContainer3.default;
@@ -34,3 +44,4 @@ exports.SortableHandle = _SortableHandle3.default;
 exports.sortableContainer = _SortableContainer3.default;
 exports.sortableElement = _SortableElement3.default;
 exports.sortableHandle = _SortableHandle3.default;
+exports.DragLayer = _DragLayer3.default;
